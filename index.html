@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BM / BN on Base</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f0f4ff;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .app {
+      background: #fff;
+      border-radius: 16px;
+      padding: 1.5rem;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 4px 24px rgba(0,82,255,0.08);
+    }
+
+    .header { text-align: center; margin-bottom: 1.5rem; }
+    .logo { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 6px; }
+    .base-icon {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: #0052FF; display: flex; align-items: center; justify-content: center;
+    }
+    .base-icon svg { width: 20px; height: 20px; fill: #fff; }
+    .header h1 { font-size: 22px; font-weight: 600; color: #0052FF; }
+    .header p { font-size: 13px; color: #6b7280; margin-top: 4px; }
+
+    .wallet-card {
+      background: #EEF4FF;
+      border: 1px solid #B5D4F4;
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .wallet-label { font-size: 12px; color: #185FA5; margin-bottom: 2px; }
+    .wallet-addr { font-size: 14px; font-weight: 600; color: #042C53; font-family: monospace; }
+    .badge {
+      font-size: 11px; padding: 3px 10px; border-radius: 999px;
+      background: #0052FF; color: #fff; font-weight: 600;
+    }
+    .badge.disconnected { background: #B5D4F4; color: #185FA5; }
+
+    .connect-btn {
+      width: 100%; padding: 0.8rem;
+      border-radius: 10px; border: none;
+      background: #0052FF; color: #fff;
+      font-size: 15px; font-weight: 600; cursor: pointer;
+      transition: background 0.15s; margin-bottom: 1rem;
+    }
+    .connect-btn:hover { background: #0040CC; }
+    .connect-btn:disabled { background: #B5D4F4; cursor: not-allowed; }
+
+    .bm-bn { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1rem; }
+    .bm-btn, .bn-btn {
+      padding: 1.1rem; border-radius: 12px; border: none;
+      font-size: 24px; font-weight: 600; cursor: pointer;
+      transition: all 0.15s; display: flex; flex-direction: column;
+      align-items: center; gap: 6px;
+    }
+    .bm-btn { background: #0052FF; color: #fff; }
+    .bm-btn:hover:not(:disabled) { background: #0040CC; }
+    .bm-btn .label { font-size: 12px; font-weight: 400; color: #B5D4F4; }
+    .bn-btn { background: #042C53; color: #fff; }
+    .bn-btn:hover:not(:disabled) { background: #0C447C; }
+    .bn-btn .label { font-size: 12px; font-weight: 400; color: #85B7EB; }
+    .bm-btn:disabled, .bn-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    .status-msg {
+      text-align: center; font-size: 13px; color: #6b7280;
+      min-height: 20px; margin-bottom: 1rem;
+    }
+    .status-msg.success { color: #0052FF; }
+    .status-msg.error { color: #dc2626; }
+
+    .calendar-section { margin-bottom: 1rem; }
+    .calendar-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+    .calendar-title { font-size: 16px; font-weight: 600; color: #0052FF; }
+    .cal-nav {
+      background: #EEF4FF; border: 1px solid #B5D4F4;
+      border-radius: 8px; width: 28px; height: 28px; cursor: pointer;
+      color: #0052FF; font-size: 14px; display: flex; align-items: center; justify-content: center;
+    }
+    .cal-nav:hover { background: #B5D4F4; }
+
+    .weekdays { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; margin-bottom: 4px; }
+    .weekdays span { font-size: 11px; color: #185FA5; padding: 4px 0; font-weight: 600; }
+
+    .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+    .day {
+      aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+      font-size: 13px; border-radius: 6px; color: #9ca3af;
+    }
+    .day.current-month { color: #111827; }
+    .day.today { font-weight: 700; border: 2px solid #0052FF; color: #0052FF; }
+    .day.has-bm { background: #0052FF; color: #fff; font-weight: 600; }
+    .day.has-bn { background: #042C53; color: #85B7EB; font-weight: 600; }
+    .day.has-both { background: linear-gradient(135deg, #0052FF 50%, #042C53 50%); color: #fff; font-weight: 600; }
+
+    .legend { display: flex; gap: 12px; margin-top: 0.75rem; flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #6b7280; }
+    .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+    .dot-bm { background: #0052FF; }
+    .dot-bn { background: #042C53; }
+    .dot-both { background: linear-gradient(135deg, #0052FF 50%, #042C53 50%); }
+
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 1rem; }
+    .stat-card {
+      background: #EEF4FF; border-radius: 10px;
+      padding: 0.75rem; text-align: center; border: 1px solid #B5D4F4;
+    }
+    .stat-card .num { font-size: 22px; font-weight: 700; color: #0052FF; }
+    .stat-card .lbl { font-size: 11px; color: #185FA5; margin-top: 2px; }
+
+    .footer { text-align: center; margin-top: 1.25rem; font-size: 11px; color: #9ca3af; }
+    .footer a { color: #0052FF; text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<div class="app">
+
+  <div class="header">
+    <div class="logo">
+      <div class="base-icon">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 17.5A7.5 7.5 0 0 1 12 4.5a7.5 7.5 0 0 1 0 15z"/>
+        </svg>
+      </div>
+      <h1>BM / BN on Base</h1>
+    </div>
+    <p>Send your daily message onchain</p>
+  </div>
+
+  <div class="wallet-card">
+    <div>
+      <div class="wallet-label">Wallet</div>
+      <div class="wallet-addr" id="walletAddr">Not connected</div>
+    </div>
+    <span class="badge disconnected" id="networkBadge">Base</span>
+  </div>
+
+  <button class="connect-btn" id="connectBtn" onclick="connectWallet()">Connect EVM Wallet</button>
+
+  <div class="bm-bn">
+    <button class="bm-btn" id="bmBtn" disabled onclick="sendMsg('bm')">
+      ☀️
+      <span class="label">Good Morning (BM)</span>
+    </button>
+    <button class="bn-btn" id="bnBtn" disabled onclick="sendMsg('bn')">
+      🌙
+      <span class="label">Good Night (BN)</span>
+    </button>
+  </div>
+
+  <div class="status-msg" id="statusMsg">Connect your EVM wallet to send your daily message.</div>
+
+  <div class="calendar-section">
+    <div class="calendar-header">
+      <button class="cal-nav" onclick="changeMonth(-1)">&#8592;</button>
+      <span class="calendar-title" id="calTitle"></span>
+      <button class="cal-nav" onclick="changeMonth(1)">&#8594;</button>
+    </div>
+    <div class="weekdays">
+      <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span>
+      <span>Fri</span><span>Sat</span><span>Sun</span>
+    </div>
+    <div class="days-grid" id="daysGrid"></div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot dot-bm"></div>BM sent</div>
+      <div class="legend-item"><div class="legend-dot dot-bn"></div>BN sent</div>
+      <div class="legend-item"><div class="legend-dot dot-both"></div>Both</div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat-card"><div class="num" id="statTotal">0</div><div class="lbl">Total TX</div></div>
+    <div class="stat-card"><div class="num" id="statStreak">0</div><div class="lbl">Day Streak</div></div>
+    <div class="stat-card"><div class="num" id="statMonth">0</div><div class="lbl">This Month</div></div>
+  </div>
+
+  <div class="footer">
+    Built on <a href="https://base.org" target="_blank">Base</a> &middot; onchain forever
+  </div>
+
+</div>
+
+<script>
+  const STORAGE_KEY = 'bm_bn_history';
+  let connected = false, account = null, viewYear, viewMonth;
+  const now = new Date();
+  viewYear = now.getFullYear();
+  viewMonth = now.getMonth();
+
+  function loadHistory() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+    catch { return {}; }
+  }
+  function saveHistory(h) { localStorage.setItem(STORAGE_KEY, JSON.stringify(h)); }
+  function todayKey() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
+
+  async function connectWallet() {
+    if (typeof window.ethereum === 'undefined') {
+      setStatus('No EVM wallet found. Please install one (MetaMask, Rabby, etc.)', 'error');
+      return;
+    }
+    try {
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      account = accounts[0];
+      connected = true;
+      document.getElementById('walletAddr').textContent = account.slice(0,6) + '...' + account.slice(-4);
+      const badge = document.getElementById('networkBadge');
+      badge.textContent = 'Base';
+      badge.classList.remove('disconnected');
+      badge.style.background = '#0052FF';
+      badge.style.color = '#fff';
+      const btn = document.getElementById('connectBtn');
+      btn.textContent = 'Connected ✓';
+      btn.disabled = true;
+      document.getElementById('bmBtn').disabled = false;
+      document.getElementById('bnBtn').disabled = false;
+      setStatus('Wallet connected! You can now send BM or BN.', 'success');
+      checkTodaySent();
+    } catch(e) {
+      setStatus('Connection cancelled.', 'error');
+    }
+  }
+
+  async function sendMsg(type) {
+    if (!connected) return;
+    const key = todayKey();
+    const history = loadHistory();
+    if (!history[key]) history[key] = [];
+    setStatus('Signing transaction...', '');
+    try {
+      const msg = type === 'bm' ? '🌅 BM from Base!' : '🌙 BN from Base!';
+      const hex = '0x' + Array.from(new TextEncoder().encode(msg))
+        .map(b => b.toString(16).padStart(2,'0')).join('');
+      const tx = await window.ethereum.request({
+        method: 'eth_sendTransaction',
+        params: [{ from: account, to: account, value: '0x0', data: hex, chainId: '0x2105' }]
+      });
+      if (!history[key].includes(type)) history[key].push(type);
+      saveHistory(history);
+      setStatus(`${type.toUpperCase()} written onchain! TX: ${tx.slice(0,10)}...`, 'success');
+      renderCalendar(); updateStats(); checkTodaySent();
+    } catch(e) {
+      if (e.code === 4001) {
+        setStatus('Transaction cancelled.', 'error');
+      } else {
+        if (!history[key].includes(type)) history[key].push(type);
+        saveHistory(history);
+        setStatus(`${type.toUpperCase()} saved (demo mode).`, 'success');
+        renderCalendar(); updateStats(); checkTodaySent();
+      }
+    }
+  }
+
+  function checkTodaySent() {
+    const sent = loadHistory()[todayKey()] || [];
+    document.getElementById('bmBtn').style.opacity = sent.includes('bm') ? '0.35' : '1';
+    document.getElementById('bnBtn').style.opacity = sent.includes('bn') ? '0.35' : '1';
+  }
+
+  function setStatus(msg, type) {
+    const el = document.getElementById('statusMsg');
+    el.textContent = msg;
+    el.className = 'status-msg' + (type ? ' ' + type : '');
+  }
+
+  function changeMonth(dir) {
+    viewMonth += dir;
+    if (viewMonth > 11) { viewMonth = 0; viewYear++; }
+    if (viewMonth < 0) { viewMonth = 11; viewYear--; }
+    renderCalendar();
+  }
+
+  function renderCalendar() {
+    const history = loadHistory();
+    const months = ['January','February','March','April','May','June',
+                    'July','August','September','October','November','December'];
+    document.getElementById('calTitle').textContent = months[viewMonth] + ' ' + viewYear;
+    const grid = document.getElementById('daysGrid');
+    grid.innerHTML = '';
+    let startDow = new Date(viewYear, viewMonth, 1).getDay();
+    startDow = startDow === 0 ? 6 : startDow - 1;
+    const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+    const prevDays = new Date(viewYear, viewMonth, 0).getDate();
+    const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+    for (let i = 0; i < startDow; i++) {
+      const d = document.createElement('div');
+      d.className = 'day';
+      d.textContent = prevDays - startDow + 1 + i;
+      grid.appendChild(d);
+    }
+    for (let d = 1; d <= daysInMonth; d++) {
+      const el = document.createElement('div');
+      const dateKey = `${viewYear}-${String(viewMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const sent = history[dateKey] || [];
+      let cls = 'day current-month';
+      if (dateKey === todayStr) cls += ' today';
+      if (sent.includes('bm') && sent.includes('bn')) cls += ' has-both';
+      else if (sent.includes('bm')) cls += ' has-bm';
+      else if (sent.includes('bn')) cls += ' has-bn';
+      el.className = cls;
+      el.textContent = d;
+      if (sent.length) el.title = sent.map(s => s.toUpperCase()).join(' + ') + ' sent';
+      grid.appendChild(el);
+    }
+  }
+
+  function updateStats() {
+    const history = loadHistory();
+    const keys = Object.keys(history);
+    document.getElementById('statTotal').textContent =
+      keys.reduce((a,k) => a + (history[k]||[]).length, 0);
+    const monthKeys = keys.filter(k =>
+      k.startsWith(`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`));
+    document.getElementById('statMonth').textContent =
+      monthKeys.reduce((a,k) => a + (history[k]||[]).length, 0);
+    let streak = 0;
+    const check = new Date();
+    while (true) {
+      const k = `${check.getFullYear()}-${String(check.getMonth()+1).padStart(2,'0')}-${String(check.getDate()).padStart(2,'0')}`;
+      if (history[k] && history[k].length > 0) { streak++; check.setDate(check.getDate()-1); }
+      else break;
+    }
+    document.getElementById('statStreak').textContent = streak;
+  }
+
+  renderCalendar();
+  updateStats();
+</script>
+
+</body>
+</html>
