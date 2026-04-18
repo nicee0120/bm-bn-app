@@ -6,7 +6,6 @@
   <title>BM / BN on Base</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: #f0f4ff;
@@ -16,7 +15,6 @@
       justify-content: center;
       padding: 1rem;
     }
-
     .app {
       background: #fff;
       border-radius: 16px;
@@ -25,50 +23,22 @@
       max-width: 420px;
       box-shadow: 0 4px 24px rgba(0,82,255,0.08);
     }
-
     .header { text-align: center; margin-bottom: 1.5rem; }
     .logo { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 6px; }
-    .base-icon {
-      width: 34px; height: 34px; border-radius: 50%;
-      background: #0052FF; display: flex; align-items: center; justify-content: center;
-    }
+    .base-icon { width: 34px; height: 34px; border-radius: 50%; background: #0052FF; display: flex; align-items: center; justify-content: center; }
     .base-icon svg { width: 20px; height: 20px; fill: #fff; }
     .header h1 { font-size: 22px; font-weight: 600; color: #0052FF; }
     .header p { font-size: 13px; color: #6b7280; margin-top: 4px; }
-
-    .wallet-card {
-      background: #EEF4FF;
-      border: 1px solid #B5D4F4;
-      border-radius: 12px;
-      padding: 1rem 1.25rem;
-      margin-bottom: 1rem;
-      display: flex; align-items: center; justify-content: space-between;
-    }
+    .wallet-card { background: #EEF4FF; border: 1px solid #B5D4F4; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-between; }
     .wallet-label { font-size: 12px; color: #185FA5; margin-bottom: 2px; }
     .wallet-addr { font-size: 14px; font-weight: 600; color: #042C53; font-family: monospace; }
-    .badge {
-      font-size: 11px; padding: 3px 10px; border-radius: 999px;
-      background: #0052FF; color: #fff; font-weight: 600;
-    }
+    .badge { font-size: 11px; padding: 3px 10px; border-radius: 999px; background: #0052FF; color: #fff; font-weight: 600; }
     .badge.disconnected { background: #B5D4F4; color: #185FA5; }
-
-    .connect-btn {
-      width: 100%; padding: 0.8rem;
-      border-radius: 10px; border: none;
-      background: #0052FF; color: #fff;
-      font-size: 15px; font-weight: 600; cursor: pointer;
-      transition: background 0.15s; margin-bottom: 1rem;
-    }
+    .connect-btn { width: 100%; padding: 0.8rem; border-radius: 10px; border: none; background: #0052FF; color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.15s; margin-bottom: 1rem; }
     .connect-btn:hover { background: #0040CC; }
     .connect-btn:disabled { background: #B5D4F4; cursor: not-allowed; }
-
     .bm-bn { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1rem; }
-    .bm-btn, .bn-btn {
-      padding: 1.1rem; border-radius: 12px; border: none;
-      font-size: 24px; font-weight: 600; cursor: pointer;
-      transition: all 0.15s; display: flex; flex-direction: column;
-      align-items: center; gap: 6px;
-    }
+    .bm-btn, .bn-btn { padding: 1.1rem; border-radius: 12px; border: none; font-size: 24px; font-weight: 600; cursor: pointer; transition: all 0.15s; display: flex; flex-direction: column; align-items: center; gap: 6px; }
     .bm-btn { background: #0052FF; color: #fff; }
     .bm-btn:hover:not(:disabled) { background: #0040CC; }
     .bm-btn .label { font-size: 12px; font-weight: 400; color: #B5D4F4; }
@@ -76,64 +46,42 @@
     .bn-btn:hover:not(:disabled) { background: #0C447C; }
     .bn-btn .label { font-size: 12px; font-weight: 400; color: #85B7EB; }
     .bm-btn:disabled, .bn-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-
-    .status-msg {
-      text-align: center; font-size: 13px; color: #6b7280;
-      min-height: 20px; margin-bottom: 1rem;
-    }
+    .status-msg { text-align: center; font-size: 13px; color: #6b7280; min-height: 20px; margin-bottom: 1rem; line-height: 1.5; }
     .status-msg.success { color: #0052FF; }
     .status-msg.error { color: #dc2626; }
-
     .calendar-section { margin-bottom: 1rem; }
-    .calendar-header {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 0.75rem;
-    }
+    .calendar-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
     .calendar-title { font-size: 16px; font-weight: 600; color: #0052FF; }
-    .cal-nav {
-      background: #EEF4FF; border: 1px solid #B5D4F4;
-      border-radius: 8px; width: 28px; height: 28px; cursor: pointer;
-      color: #0052FF; font-size: 14px; display: flex; align-items: center; justify-content: center;
-    }
+    .cal-nav { background: #EEF4FF; border: 1px solid #B5D4F4; border-radius: 8px; width: 28px; height: 28px; cursor: pointer; color: #0052FF; font-size: 14px; display: flex; align-items: center; justify-content: center; }
     .cal-nav:hover { background: #B5D4F4; }
-
     .weekdays { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; margin-bottom: 4px; }
     .weekdays span { font-size: 11px; color: #185FA5; padding: 4px 0; font-weight: 600; }
-
     .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
-    .day {
-      aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
-      font-size: 13px; border-radius: 6px; color: #9ca3af;
-    }
+    .day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 13px; border-radius: 6px; color: #9ca3af; }
     .day.current-month { color: #111827; }
     .day.today { font-weight: 700; border: 2px solid #0052FF; color: #0052FF; }
     .day.has-bm { background: #0052FF; color: #fff; font-weight: 600; }
     .day.has-bn { background: #042C53; color: #85B7EB; font-weight: 600; }
     .day.has-both { background: linear-gradient(135deg, #0052FF 50%, #042C53 50%); color: #fff; font-weight: 600; }
-
     .legend { display: flex; gap: 12px; margin-top: 0.75rem; flex-wrap: wrap; }
     .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #6b7280; }
     .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
     .dot-bm { background: #0052FF; }
     .dot-bn { background: #042C53; }
     .dot-both { background: linear-gradient(135deg, #0052FF 50%, #042C53 50%); }
-
     .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 1rem; }
-    .stat-card {
-      background: #EEF4FF; border-radius: 10px;
-      padding: 0.75rem; text-align: center; border: 1px solid #B5D4F4;
-    }
+    .stat-card { background: #EEF4FF; border-radius: 10px; padding: 0.75rem; text-align: center; border: 1px solid #B5D4F4; }
     .stat-card .num { font-size: 22px; font-weight: 700; color: #0052FF; }
     .stat-card .lbl { font-size: 11px; color: #185FA5; margin-top: 2px; }
-
-    .footer { text-align: center; margin-top: 1.25rem; font-size: 11px; color: #9ca3af; }
+    .contract-info { margin-top: 1rem; padding: 0.75rem; background: #EEF4FF; border-radius: 10px; border: 1px solid #B5D4F4; text-align: center; }
+    .contract-info a { font-size: 11px; color: #0052FF; text-decoration: none; font-family: monospace; }
+    .contract-info a:hover { text-decoration: underline; }
+    .footer { text-align: center; margin-top: 1rem; font-size: 11px; color: #9ca3af; }
     .footer a { color: #0052FF; text-decoration: none; }
   </style>
 </head>
 <body>
-
 <div class="app">
-
   <div class="header">
     <div class="logo">
       <div class="base-icon">
@@ -193,47 +141,52 @@
     <div class="stat-card"><div class="num" id="statMonth">0</div><div class="lbl">This Month</div></div>
   </div>
 
+  <div class="contract-info">
+    <a href="https://basescan.org/address/0xA19564A31065aEf87A19fb5CBb4f8d7D01CeA7d0" target="_blank">
+      View contract on Basescan ↗
+    </a>
+  </div>
+
   <div class="footer">
     Built on <a href="https://base.org" target="_blank">Base</a> &middot; onchain forever
   </div>
-
 </div>
 
 <script>
-  const STORAGE_KEY = 'bm_bn_history';
-  let connected = false, account = null, viewYear, viewMonth;
+  const CONTRACT_ADDRESS = '0xA19564A31065aEf87A19fb5CBb4f8d7D01CeA7d0';
+  const BASE_CHAIN_ID = '0x2105';
+  const SEND_BM_SIG = '0x6f9774ce';
+  const SEND_BN_SIG = '0x3e8a7b2f';
+  let account = null;
+  let viewYear, viewMonth;
   const now = new Date();
   viewYear = now.getFullYear();
   viewMonth = now.getMonth();
 
-  function loadHistory() {
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
-    catch { return {}; }
-  }
-  function saveHistory(h) { localStorage.setItem(STORAGE_KEY, JSON.stringify(h)); }
-  function todayKey() {
-    const d = new Date();
-    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  }
-
   async function connectWallet() {
     if (typeof window.ethereum === 'undefined') {
-      setStatus('No EVM wallet found. Please install one (MetaMask, Rabby, etc.)', 'error');
+      setStatus('No EVM wallet found. Please install MetaMask or Rabby.', 'error');
       return;
     }
     try {
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
       account = accounts[0];
-      connected = true;
+      try {
+        await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: BASE_CHAIN_ID }] });
+      } catch (switchError) {
+        if (switchError.code === 4902) {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [{ chainId: BASE_CHAIN_ID, chainName: 'Base', nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 }, rpcUrls: ['https://mainnet.base.org'], blockExplorerUrls: ['https://basescan.org'] }]
+          });
+        }
+      }
       document.getElementById('walletAddr').textContent = account.slice(0,6) + '...' + account.slice(-4);
       const badge = document.getElementById('networkBadge');
-      badge.textContent = 'Base';
-      badge.classList.remove('disconnected');
-      badge.style.background = '#0052FF';
-      badge.style.color = '#fff';
-      const btn = document.getElementById('connectBtn');
-      btn.textContent = 'Connected ✓';
-      btn.disabled = true;
+      badge.textContent = 'Base'; badge.classList.remove('disconnected');
+      badge.style.background = '#0052FF'; badge.style.color = '#fff';
+      document.getElementById('connectBtn').textContent = 'Connected ✓';
+      document.getElementById('connectBtn').disabled = true;
       document.getElementById('bmBtn').disabled = false;
       document.getElementById('bnBtn').disabled = false;
       setStatus('Wallet connected! You can now send BM or BN.', 'success');
@@ -244,33 +197,49 @@
   }
 
   async function sendMsg(type) {
-    if (!connected) return;
-    const key = todayKey();
+    if (!account) return;
+    const today = todayKey();
     const history = loadHistory();
-    if (!history[key]) history[key] = [];
-    setStatus('Signing transaction...', '');
+    if (history[today] && history[today].includes(type)) {
+      setStatus(`You already sent ${type.toUpperCase()} today!`, 'error');
+      return;
+    }
+    setStatus('Confirm the transaction in your wallet...', '');
     try {
-      const msg = type === 'bm' ? '🌅 BM from Base!' : '🌙 BN from Base!';
-      const hex = '0x' + Array.from(new TextEncoder().encode(msg))
-        .map(b => b.toString(16).padStart(2,'0')).join('');
+      const data = type === 'bm' ? SEND_BM_SIG : SEND_BN_SIG;
       const tx = await window.ethereum.request({
         method: 'eth_sendTransaction',
-        params: [{ from: account, to: account, value: '0x0', data: hex, chainId: '0x2105' }]
+        params: [{ from: account, to: CONTRACT_ADDRESS, value: '0x0', data: data }]
       });
-      if (!history[key].includes(type)) history[key].push(type);
-      saveHistory(history);
-      setStatus(`${type.toUpperCase()} written onchain! TX: ${tx.slice(0,10)}...`, 'success');
+      saveLocal(type);
+      setStatus(`${type.toUpperCase()} sent onchain! TX: ${tx.slice(0,10)}...`, 'success');
       renderCalendar(); updateStats(); checkTodaySent();
     } catch(e) {
       if (e.code === 4001) {
         setStatus('Transaction cancelled.', 'error');
       } else {
-        if (!history[key].includes(type)) history[key].push(type);
-        saveHistory(history);
-        setStatus(`${type.toUpperCase()} saved (demo mode).`, 'success');
+        saveLocal(type);
+        setStatus(`${type.toUpperCase()} saved locally.`, 'success');
         renderCalendar(); updateStats(); checkTodaySent();
       }
     }
+  }
+
+  function saveLocal(type) {
+    const h = loadHistory();
+    const dk = todayKey();
+    if (!h[dk]) h[dk] = [];
+    if (!h[dk].includes(type)) h[dk].push(type);
+    localStorage.setItem('bm_bn_history', JSON.stringify(h));
+  }
+
+  function loadHistory() {
+    try { return JSON.parse(localStorage.getItem('bm_bn_history') || '{}'); } catch { return {}; }
+  }
+
+  function todayKey() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
   }
 
   function checkTodaySent() {
@@ -294,8 +263,7 @@
 
   function renderCalendar() {
     const history = loadHistory();
-    const months = ['January','February','March','April','May','June',
-                    'July','August','September','October','November','December'];
+    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
     document.getElementById('calTitle').textContent = months[viewMonth] + ' ' + viewYear;
     const grid = document.getElementById('daysGrid');
     grid.innerHTML = '';
@@ -305,10 +273,8 @@
     const prevDays = new Date(viewYear, viewMonth, 0).getDate();
     const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
     for (let i = 0; i < startDow; i++) {
-      const d = document.createElement('div');
-      d.className = 'day';
-      d.textContent = prevDays - startDow + 1 + i;
-      grid.appendChild(d);
+      const d = document.createElement('div'); d.className = 'day';
+      d.textContent = prevDays - startDow + 1 + i; grid.appendChild(d);
     }
     for (let d = 1; d <= daysInMonth; d++) {
       const el = document.createElement('div');
@@ -319,8 +285,7 @@
       if (sent.includes('bm') && sent.includes('bn')) cls += ' has-both';
       else if (sent.includes('bm')) cls += ' has-bm';
       else if (sent.includes('bn')) cls += ' has-bn';
-      el.className = cls;
-      el.textContent = d;
+      el.className = cls; el.textContent = d;
       if (sent.length) el.title = sent.map(s => s.toUpperCase()).join(' + ') + ' sent';
       grid.appendChild(el);
     }
@@ -329,18 +294,13 @@
   function updateStats() {
     const history = loadHistory();
     const keys = Object.keys(history);
-    document.getElementById('statTotal').textContent =
-      keys.reduce((a,k) => a + (history[k]||[]).length, 0);
-    const monthKeys = keys.filter(k =>
-      k.startsWith(`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`));
-    document.getElementById('statMonth').textContent =
-      monthKeys.reduce((a,k) => a + (history[k]||[]).length, 0);
-    let streak = 0;
-    const check = new Date();
+    document.getElementById('statTotal').textContent = keys.reduce((a,k) => a + (history[k]||[]).length, 0);
+    const monthKeys = keys.filter(k => k.startsWith(`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`));
+    document.getElementById('statMonth').textContent = monthKeys.reduce((a,k) => a + (history[k]||[]).length, 0);
+    let streak = 0; const check = new Date();
     while (true) {
       const k = `${check.getFullYear()}-${String(check.getMonth()+1).padStart(2,'0')}-${String(check.getDate()).padStart(2,'0')}`;
-      if (history[k] && history[k].length > 0) { streak++; check.setDate(check.getDate()-1); }
-      else break;
+      if (history[k] && history[k].length > 0) { streak++; check.setDate(check.getDate()-1); } else break;
     }
     document.getElementById('statStreak').textContent = streak;
   }
@@ -348,6 +308,5 @@
   renderCalendar();
   updateStats();
 </script>
-
 </body>
 </html>
